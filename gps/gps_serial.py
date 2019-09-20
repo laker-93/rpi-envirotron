@@ -13,14 +13,13 @@ class GPS:
     def handle_data(data):
         if data.startswith(r'$GNGGA') or data.startswith(r'$GPGGA'):
             msg = pynmea2.parse(data)
-            return msg
-            #return msg.latitude, msg.longitude
+            return msg.latitude, msg.longitude
     
     def read_from_port(self, result):
         try:
             data = self.ser.readline().decode()
             if data:
-                msg = handle_data(data)
+                msg = self.handle_data(data)
                 if msg:
                     result[0] = msg
         except Exception as ex:

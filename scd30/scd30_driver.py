@@ -93,26 +93,28 @@ class SCD30:
       
       return -1
 
-    def _is_ready(self):
-        """
-        Blocks until sensor has data
-        """
-        while True:
-            ret = self.i2c_write([0x02, 0x02])
-            if ret == -1:
-                eprint("error writing")
-                exit(1)
-            data = self.read_n_bytes(3)
-            if data == False:
-                time.sleep(0.1)
-                continue
-            if data[1] == 1:
-                break
-            else:
-                time.sleep(0.1)
+    def set_pressure(self, pressure):
+        LSB = 0xFF & pressure
+        MSB = 0xFF & (pressure >> 8)
+        pressure = [MSB, LSB]
+        pressure_ar = ''.join(chr(x) for x in pressure)
+        #f_crc8 =crcmod.mkCrcFun(0x131
+ 
+    def is_ready(self):
+        ret = self.i2c_write([0x02, 0x02])
+        if ret == -1:
+            eprint("error writing")
+            exit(1)
+        data = self.read_n_bytes(3)
+        if data == False:
+            time.sleep(0.1)
+            return False
+        if data[1] == 1:
+            return True
+        else:
+            return False
         
     def get_readings(self):
-        self._is_ready()
         self.i2c_write([0x03, 0x00])
         data = self.read_n_bytes(18)
         
