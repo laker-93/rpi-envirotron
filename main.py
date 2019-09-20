@@ -3,6 +3,7 @@ from gps.gps_serial import GPS
 import time
 import at
 from cayennelpp import LppFrame
+import binascii
 
 p = Pid()
 p.connect()
@@ -13,6 +14,7 @@ gps = GPS()
 
 lora = at.AT_Master("/dev/ttyACM0")
 lora.join()
+print(lora.purge())
 
 # Set the measurement interval to 2s
 if scd30.read_meas_interval() != 2:
@@ -32,11 +34,12 @@ while True:
         print("Lat:", lat)
         print("Lon:", lon)
         frame = LppFrame()
-        frame.add_temperature(1, temp)
-        frame.add_humitidy(2, humidity)
-        frame.add_gps(3, lat, lon, 0)
-        buffer = frame.bytes()
-        print(buffer)
-        #lora.send_bytes(99, buffer)
+        frame.add_temperature(1, temp)          # TODO: verify channel
+        frame.add_humitidy(2, humidity)         # TODO: verify channel
+        frame.add_gps(3, lat, lon, 0)           # TODO: verify channel
+        buffer = binascii.hexlify(frame.bytes()).decode('UTF-8')
+        lora.send_bytes(99, buffer)
+        print(lora.purge())
+        print()
     else:
         time.sleep(0.1)

@@ -1,9 +1,7 @@
 import serial
+import binascii
+from cayennelpp import LppFrame
 
-"""
-
-\dev\ttyACM0
-"""
 
 class AT_Master:
 
@@ -18,7 +16,7 @@ class AT_Master:
             if args is None:
                 self.__serial.write(bytes('AT+%s\r\n' % cmd, 'UTF-8'))
             else:
-                self.__serial.write(bytes('AT+%s=%s' % (cmd, args), 'UTF-8'))
+                self.__serial.write(bytes('AT+%s=%s\r\n' % (cmd, args), 'UTF-8'))
 
     def close(self):
         self.__serial.close()
@@ -43,3 +41,12 @@ class AT_Master:
 
     def send_bytes(self, port, data):
         self.__at("SENDB", str(port) + ":" + data)
+
+    def test(self):
+        frame = LppFrame()
+        frame.add_temperature(1, 420)
+        frame.add_humitidy(2, 69)
+        frame.add_gps(3, 72.123, 48.68, 0)
+        buffer = binascii.hexlify(frame.bytes()).decode('UTF-8')
+        print(buffer)
+        self.send_bytes(99, buffer)
