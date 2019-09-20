@@ -1,5 +1,6 @@
 import serial
 from threading import Thread
+import time
 import pynmea2
 
 port = "/dev/serial0"
@@ -24,5 +25,6 @@ class GPS:
                     result[0] = msg
         except Exception as ex:
             self.ser.close()
+            time.sleep(0.2)
             self.ser = serial.Serial(port, 9600, 8, 'N', 1, timeout=1)
             self.ser.reset_input_buffer()
