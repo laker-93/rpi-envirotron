@@ -20,7 +20,7 @@ while True:
     if scd30.is_ready() and result[0]:
         temp, humidity, co2 = scd30.get_readings()
         lat, lon = result[0]
-        json = """[{"topic":"envirotron-pi","device":"SCD30","temperature":%f,"humidity":%f,"co2":%d,"latitude":%f,"longitude":%f}]""" % (temp, humidity, co2, lat, lon)
+        json = """[{"topic":"envirotron-pi","payload":[{"measurement":"device_frmpayload_data_co2","tags":{"device_name":"rpi"},"fields":{"value":%d}},{"measurement":"device_frmpayload_data_temperature","tags":{"device_name":"rpi"},"fields":{"value":%f}},{"measurement":"device_frmpayload_data_humidity","tags":{"device_name":"rpi"},"fields":{"value":%f}},{"measurement":"device_frmpayload_data_gps_location","tags":{"device_name":"rpi"},"fields":{"latitude":%f,"longitude":%f}}]}]""" % (co2, temp, humidity, lat, lon)
         print(json)
         with open('/home/pi/envirotron-pi/readings.json', 'w') as results:
             results.write(json)
