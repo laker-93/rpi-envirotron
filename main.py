@@ -24,6 +24,7 @@ while True:
         print(json)
         with open('/home/pi/envirotron-pi/readings.json', 'w') as results:
             results.write(json)
+        result = [None]
     else:
         time.sleep(0.1)
 

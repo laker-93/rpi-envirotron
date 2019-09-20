@@ -12,9 +12,14 @@ class GPS:
 
     @staticmethod
     def handle_data(data):
-        if data.startswith(r'$GNGGA') or data.startswith(r'$GPGGA'):
+        if data.startswith(r'$GNGGA'):
             msg = pynmea2.parse(data)
-            return msg.latitude, msg.longitude
+            print("gngga gps: {}".format(msg))
+            return msg
+        if data.startswith(r'$GPGGA'):
+            msg = pynmea2.parse(data)
+            if (msg.latitude, msg.longitude) != (0.0, 0.0):
+                return msg
     
     def read_from_port(self, result):
         try:
@@ -22,7 +27,7 @@ class GPS:
             if data:
                 msg = self.handle_data(data)
                 if msg:
-                    result[0] = msg
+                    result[0] = (msg.latitude, msg.longitude)
         except Exception as ex:
             self.ser.close()
             time.sleep(0.2)
